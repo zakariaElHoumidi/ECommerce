@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CategoryControlleur;
+use App\Http\Controllers\api\ProductControlleur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,14 @@ Route::name("administrateurs.")->middleware(['auth:sanctum'])->prefix("/admin")-
         Route::get('/{id}', [CategoryControlleur::class, 'show']);
         Route::put('/edit/{id}', [CategoryControlleur::class, 'update']);
         Route::delete('/{id}', [CategoryControlleur::class, 'destroy']);
+    });
+
+    Route::name("products.")->prefix("/products")->group(function () {
+        Route::get('/', [ProductControlleur::class, 'index']);
+        Route::post('/', [ProductControlleur::class, 'store']);
+        Route::get('/{id}', [ProductControlleur::class, 'show']);
+        Route::put('/edit/{id}', [ProductControlleur::class, 'update']);
+        Route::delete('/{id}', [ProductControlleur::class, 'destroy']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
