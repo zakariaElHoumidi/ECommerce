@@ -25,9 +25,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::name("guests")->middleware(["guest:sanctum"])->prefix("/")->group(function () {
-    Route::name("auth.")->prefix("/auth")->group(function () {
-        Route::post('login', [AuthController::class, 'login']);
+    Route::name("auth.")->prefix("/user-auth")->group(function () {
+        Route::post('login', [AuthController::class, 'userLogin']);
 
-        Route::post('register', [AuthController::class, 'register']);
+        Route::post('register', [AuthController::class, 'userRegister']);
+    });
+
+    Route::name("auth.")->prefix("/admin-auth")->group(function () {
+        Route::post('login', [AuthController::class, 'adminLogin']);
+
+        Route::post('register', [AuthController::class, 'adminRegister']);
     });
 });

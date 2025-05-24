@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Administrateur;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function register(Request $req)
+    // User
+    public function userRegister(Request $req)
     {
         $data = $req->all();
 
@@ -45,7 +47,7 @@ class AuthController extends Controller
         }
     }
 
-    public function login(Request $req)
+    public function userLogin(Request $req)
     {
         $rules = [
             'email'     => ['required', 'email', 'exists:users,email'],
@@ -79,7 +81,75 @@ class AuthController extends Controller
         return response('User introuvable', 404);
     }
 
-    public function logout()
+    public function userLogout()
+    {
+        Auth::logout();
+
+        return response('you are now logged out', 200);
+    }
+    // Administrateurt
+
+
+    public function adminRegister(Request $req)
+    {
+        $data = $req->all();
+
+        $rules = [
+            'firstname' => ['required', 'max:255'],
+            'lastname'  => ['required', 'max:255'],
+            'email'     => ['required', 'email', 'unique:administrateurs'],
+            'password'  => ['required', 'min:8'],
+            'cin'     => ['required', 'unique:administrateurs'],
+        ];
+
+        $data = Validator::make($data, $rules);
+
+        if ($data->fails()) {
+            return response($data->messages()->first(), 422);
+        } else {
+            $admin            = new Administrateur();
+            $admin->firstname = $req->firstname;
+            $admin->lastname  = $req->lastname;
+            $admin->cin     = $req->cin;
+            $admin->email     = $req->email;
+            $admin->password  = Hash::make($req->password);
+
+            $admin->save();
+
+            return response("Admin created successfully", 200);
+        }
+    }
+
+    public function adminLogin(Request $req)
+    {
+        $rules = [
+            'cin'     => ['required', 'exists:administrateurs,cin'],
+            'password' => ['required', 'min:8'],
+        ];
+
+        $validator = Validator::make($req->all(), $rules);
+
+        if ($validator->fails()) {
+            return response($validator->errors()->first(), 422);
+        }
+
+        $admin = Administrateur::where('cin', $req->cin)->first();
+
+        if (!$admin || !Hash::check($req->password, $admin->password)) {
+            return response('Admin introuvable', 404);
+        }
+
+        $token = $admin
+            ->createToken($admin->name)
+            ->plainTextToken;
+
+        return response([
+            'token' => $token,
+            'administrateur'  => $admin,
+        ], 200);
+    }
+
+    public function adminLogout()
     {
         Auth::logout();
 
