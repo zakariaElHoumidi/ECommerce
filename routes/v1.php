@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CategoryControlleur;
 use App\Http\Controllers\api\ProductControlleur;
+use App\Http\Controllers\api\RatingControlleur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -60,7 +61,11 @@ Route::name("administrateurs.")->middleware(['auth:sanctum'])->prefix("/admin")-
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
-Route::name("users.")->middleware(['auth:sanctum'])->prefix("/members")->group(function () {
+Route::name("users.")->middleware(['auth:sanctum'])->prefix("/")->group(function () {
+    Route::name("ratings.")->prefix("/products/{id}/ratings")->group(function () {
+        Route::get('/', [RatingControlleur::class, 'index']);
+        Route::post('/', [RatingControlleur::class, 'store']);
+    });
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
