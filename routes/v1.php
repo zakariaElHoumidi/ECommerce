@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\CategoryControlleur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::name("guests")->middleware(["guest:sanctum"])->prefix("/")->group(function () {
+Route::name("guests.")->middleware(["guest:sanctum"])->prefix("/")->group(function () {
     Route::name("auth.")->prefix("/user-auth")->group(function () {
         Route::post('login', [AuthController::class, 'userLogin']);
 
@@ -36,4 +37,21 @@ Route::name("guests")->middleware(["guest:sanctum"])->prefix("/")->group(functio
 
         Route::post('register', [AuthController::class, 'adminRegister']);
     });
+});
+
+Route::name("administrateurs.")->middleware(['auth:sanctum'])->prefix("/admin")->group(function () {
+    Route::name("categories.")->prefix("/categories")->group(function () {
+        Route::get('/', [CategoryControlleur::class, 'index']);
+        Route::post('/', [CategoryControlleur::class, 'store']);
+        Route::get('/{id}', [CategoryControlleur::class, 'show']);
+        Route::put('/edit/{id}', [CategoryControlleur::class, 'update']);
+        Route::delete('/{id}', [CategoryControlleur::class, 'destroy']);
+    });
+
+    Route::post('logout', [AuthController::class, 'logout']);
+});
+
+Route::name("users.")->middleware(['auth:sanctum'])->prefix("/members")->group(function () {
+
+    Route::post('logout', [AuthController::class, 'logout']);
 });
