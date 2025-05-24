@@ -11,7 +11,7 @@ class ProductControlleur extends Controller
 {
     public function __construct()
     {
-        $this->middleware('identify.role')->except('index');
+        $this->middleware('is.admin')->except('index');
     }
 
     public function index()
