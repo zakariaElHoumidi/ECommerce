@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    public function logout()
+    {
+        Auth::logout();
+
+        return response('you are now logged out', 200);
+    }
+
     // User
     public function userRegister(Request $req)
     {
@@ -81,15 +88,7 @@ class AuthController extends Controller
         return response('User introuvable', 404);
     }
 
-    public function userLogout()
-    {
-        Auth::logout();
-
-        return response('you are now logged out', 200);
-    }
     // Administrateurt
-
-
     public function adminRegister(Request $req)
     {
         $data = $req->all();
@@ -147,12 +146,5 @@ class AuthController extends Controller
             'token' => $token,
             'administrateur'  => $admin,
         ], 200);
-    }
-
-    public function adminLogout()
-    {
-        Auth::logout();
-
-        return response('you are now logged out', 200);
     }
 }
