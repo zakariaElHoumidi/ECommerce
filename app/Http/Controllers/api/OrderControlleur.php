@@ -29,18 +29,17 @@ class OrderControlleur extends Controller
         try {
             $total = $carts->sum(fn($cart) => $cart->product->price * $cart->quantity);
 
-            $order = new Order();
-
-            $order->user_id = $user->id;
-            $order->total_price = $total;
+            $order = Order::create([
+                'user_id' => $user->id,
+                'total_price' => $total
+            ]);
 
             foreach ($carts as $cart) {
-                $orderItem = new OrderItem();
-
-                $orderItem->order_id = $order->id;
-                $orderItem->product_id = $cart->product_id;
-                $orderItem->quantity = $cart->quantity;
-                $orderItem->price = $cart->product->price;
+                $order->items()->create([
+                    'product_id' => $cart->product_id,
+                    'quantity' => $cart->quantity,
+                    'price' => $cart->product->price,
+                ]);
             }
 
             $user->carts()->delete();
