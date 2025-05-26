@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CartControlleur;
 use App\Http\Controllers\api\CategoryControlleur;
+use App\Http\Controllers\api\OrderControlleur;
 use App\Http\Controllers\api\ProductControlleur;
 use App\Http\Controllers\api\RatingControlleur;
 use Illuminate\Http\Request;
@@ -71,6 +72,11 @@ Route::name("users.")->middleware(['auth:sanctum'])->prefix("/")->group(function
     Route::name("carts.")->prefix("/carts")->group(function () {
         Route::get('/', [CartControlleur::class, 'index']);
         Route::post('/', [CartControlleur::class, 'store']);
+    });
+
+    Route::name("orders.")->prefix("/orders")->group(function () {
+        Route::get('/', [OrderControlleur::class, 'index']);
+        Route::post('/', [OrderControlleur::class, 'store']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
