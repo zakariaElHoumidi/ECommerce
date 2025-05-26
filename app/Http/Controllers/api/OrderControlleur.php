@@ -10,9 +10,15 @@ use Illuminate\Support\Facades\DB;
 
 class OrderControlleur extends Controller
 {
+    public function __construct() {
+        $this->middleware('is.admin')->except(['store', 'show']);
+    }
+
     public function index()
     {
-        //
+        $orders = Order::with('items')->get();
+
+        return response($orders, 200);
     }
 
     public function store(Request $request)
@@ -58,16 +64,12 @@ class OrderControlleur extends Controller
 
     public function show(string $id)
     {
-        //
-    }
+        $order = Order::find($id);
 
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if (!$order) {
+            return response('Order not found', 404);
+        }
 
-    public function destroy(string $id)
-    {
-        //
+        return response($order->with('items.product')->get(), 200);
     }
 }

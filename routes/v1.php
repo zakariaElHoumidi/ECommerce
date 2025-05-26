@@ -76,6 +76,7 @@ Route::name("users.")->middleware(['auth:sanctum'])->prefix("/")->group(function
 
     Route::name("orders.")->prefix("/orders")->group(function () {
         Route::get('/', [OrderControlleur::class, 'index']);
+        Route::get('/{id}', [OrderControlleur::class, 'show']);
         Route::post('/', [OrderControlleur::class, 'store']);
     });
 
