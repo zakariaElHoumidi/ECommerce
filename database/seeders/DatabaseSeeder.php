@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             AdministrateurSeeder::class,
             CategorySeeder::class,
             ProductSeeder::class,
-            RatingSeeder::class
+            RatingSeeder::class,
+            CartSeeder::class
         ]);
     }
 }

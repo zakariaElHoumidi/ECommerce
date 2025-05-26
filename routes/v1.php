@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\CartControlleur;
 use App\Http\Controllers\api\CategoryControlleur;
 use App\Http\Controllers\api\ProductControlleur;
 use App\Http\Controllers\api\RatingControlleur;
@@ -65,6 +66,11 @@ Route::name("users.")->middleware(['auth:sanctum'])->prefix("/")->group(function
     Route::name("ratings.")->prefix("/products/{id}/ratings")->group(function () {
         Route::get('/', [RatingControlleur::class, 'index']);
         Route::post('/', [RatingControlleur::class, 'store']);
+    });
+
+    Route::name("carts.")->prefix("/carts")->group(function () {
+        Route::get('/', [CartControlleur::class, 'index']);
+        Route::post('/', [CartControlleur::class, 'store']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);
