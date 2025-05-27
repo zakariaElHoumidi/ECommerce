@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CartControlleur extends Controller
@@ -34,15 +35,29 @@ class CartControlleur extends Controller
             $user = auth()->user();
             $product = Product::find($req->product_id);
 
-            $cart = new Cart();
+            if ($product->quantity < $req->quantity) {
+                return response('Product quantity is not enough', 400);
+            }
 
-            $cart->user_id = $user->id;
-            $cart->product_id = $req->product_id;
-            $cart->quantity = $req->quantity;
+            try {
+                DB::beginTransaction();
 
-            $cart->save();
+                $user->carts()->create([
+                    'product_id' => $req->product_id,
+                    'quantity' => $req->quantity
+                ]);
 
-            return response("$product->label added to cart", 200);
+                $product->quantity -= $req->quantity;
+
+                $product->save();
+
+                DB::commit();
+                
+                return response("$product->label added to cart", 200);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response($e->getMessage(), 500);
+            }
         }
     }
 }
