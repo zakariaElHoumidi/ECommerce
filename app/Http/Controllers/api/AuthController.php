@@ -147,4 +147,18 @@ class AuthController extends Controller
             'administrateur'  => $admin,
         ], 200);
     }
+
+    public function user()
+    {
+        $isAuth = auth("sanctum")->check();
+
+
+        if ($isAuth) {
+            return response(auth()->user(), 200);
+        } else {
+            return response([
+                'message' => 'Guest'
+            ], 403);
+        }
+    }
 }

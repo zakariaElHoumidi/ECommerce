@@ -42,7 +42,7 @@ class CartControlleur extends Controller
 
             $cart->save();
 
-            return response("{{ $product->label }} added to cart", 200);
+            return response("$product->label added to cart", 200);
         }
     }
 }

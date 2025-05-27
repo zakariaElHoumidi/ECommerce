@@ -9,10 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryControlleur extends Controller
 {
-    public function __construct() {
-        $this->middleware('is.admin')->except('index');
-    }
-
     public function index()
     {
         $categories = Category::all();

@@ -3,20 +3,24 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Administrateur;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class OrderControlleur extends Controller
 {
-    public function __construct() {
-        $this->middleware('is.admin')->except(['store', 'show']);
-    }
-
     public function index()
     {
-        $orders = Order::with('items')->get();
+        $user = auth()->user();
+
+        if ($user instanceof User) {
+            $orders = $user->orders()->with('items')->get();
+        } else if ($user instanceof Administrateur) {
+            $orders = Order::with('items')->get();
+        }
 
         return response($orders, 200);
     }
@@ -64,12 +68,21 @@ class OrderControlleur extends Controller
 
     public function show(string $id)
     {
-        $order = Order::find($id);
+        $user = auth()->user();
+
+
+        $order = Order::with('items.product')->find($id);
 
         if (!$order) {
             return response('Order not found', 404);
         }
 
-        return response($order->with('items.product')->get(), 200);
+        if ($user instanceof User) {
+            if ($order->user_id !== $user->id) {
+                return response('Order not found', 404);
+            }
+        }
+
+        return response($order, 200);
     }
 }

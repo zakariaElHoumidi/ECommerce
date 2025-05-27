@@ -10,10 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class RatingControlleur extends Controller
 {
-    public function __construct() {
-        $this->middleware('is.user');
-    }
-
     public function index(string $id)
     {
         $product = Product::find($id);
@@ -49,5 +45,25 @@ class RatingControlleur extends Controller
 
             return response('Rating created successfully', 200);
         }
+    }
+
+    public function show($id, $rating_id)
+    {
+        $product = Product::find($id);
+        $rating = Rating::find($rating_id);
+
+        if (!$product) {
+            return response('Product not found', 404);
+        }
+
+        if (!$rating) {
+            return response('Rating not found', 404);
+        }
+
+        if ($product->id == $rating->product_id) {
+            return response($rating, 200);
+        }
+
+        return response('Rating not found', 404);
     }
 }
